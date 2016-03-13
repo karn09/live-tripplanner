@@ -80,13 +80,14 @@ router.post('/add', function (req, res) {
 });
 
 router.post('/:day_id/restaurants', function(req, res) {
+  console.log(req.body);
+  //req.day.restaurants.push()
+});
+
+router.post('/:day_id/hotel', function(req, res) {
 
 });
 
-router.post(':day_id/hotel', function(req, res) {
-
-});
-
-router.post(':/day_id/activities', function(req, res) {
+router.post('/:day_id/activities', function(req, res) {
 
 });
