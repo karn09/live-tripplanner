@@ -29,6 +29,7 @@
     "gulp-sass": "^2.2.0",
     "mongoose": "^4.4.6",
     "node-sass": "^3.4.2",
+    "npm-run-all": "^1.5.3",
     "swig": "^1.4.2"
   }
 }
