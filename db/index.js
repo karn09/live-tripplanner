@@ -2,7 +2,7 @@ var Promise = require('bluebird');
 var mongoose = require('mongoose');
 
 var daySchema = mongoose.Schema({
-  number: Number,
+  number: {type: Number, unique: true},
   hotel: {type: mongoose.Schema.Types.ObjectId, ref: 'Hotel'},
   restaurants: [{type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant'}],
   activities: [{type: mongoose.Schema.Types.ObjectId, ref: 'Activity'}]

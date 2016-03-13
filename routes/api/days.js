@@ -28,6 +28,19 @@ router.param('day_id', function(req, res, next, day_id) {
   });
 });
 
+
+
+router.get('/restaurants', function(req, res) {
+  Restaurant.find()
+  .then(function(restaurants){
+    res.json(restaurants)
+  })
+  .catch(function(err){
+    console.log(err);
+    res.send(err);
+  })
+});
+
 router.get('/:day_id', function(req, res) {
   res.json(req.day);
 });
@@ -76,12 +89,15 @@ router.post('/add', function (req, res) {
   })
   .catch(function(err) {
     console.log(err);
+    res.sendStatus(403);
   });
 });
 
-router.post('/:day_id/restaurants', function(req, res) {
-  console.log(req.body);
-  //req.day.restaurants.push()
+router.post('/:day_id/restaurant', function(req, res) {
+  // console.log(req.body.restaurant);
+  req.day.restaurants.push(req.body.restaurant);
+  console.log(req.day.restaurants);
+  res.sendStatus(200);
 });
 
 router.post('/:day_id/hotel', function(req, res) {
