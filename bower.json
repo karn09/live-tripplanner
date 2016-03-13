@@ -1,0 +1,23 @@
+{
+  "name": "tripplanner-static-ui",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Christopher Kennedy <cjkb90@users.noreply.github.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/karn09/live-tripplanner",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.1"
+  }
+}
