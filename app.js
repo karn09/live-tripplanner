@@ -2,6 +2,7 @@ var express = require('express');
 var Promise = require('bluebird');
 var path = require('path');
 var swig = require('swig');
+var bodyParser = require('body-parser');
 swig.setDefaults({ cache: false });
 
 var models = require('./db').models;
@@ -11,6 +12,8 @@ var Activity = models.Activity;
 
 var app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
 app.use('/client', express.static(path.join(__dirname, 'client')));
 app.use('/vendor', express.static(path.join(__dirname, 'vendor')));
 app.engine('html', swig.renderFile);
@@ -18,6 +21,7 @@ app.set('view engine', 'html');
 
 module.exports = app;
 
+app.use('/api/days', require('./routes/api/days.js'));
 app.use(function(req, res, next){
   var pages = [
     { url: '/about', title: 'About' },
@@ -27,10 +31,11 @@ app.use(function(req, res, next){
   next();
 });
 
+
 app.get('/', function(req, res, next){
-  Promise.join(Hotel.find(), Restaurant.find(), Activity.find()) 
+  Promise.join(Hotel.find(), Restaurant.find(), Activity.find())
     .spread(function(hotels, restaurants, activities){
-      res.render('index', { title: 'Home', 
+      res.render('index', { title: 'Home',
         hotels: hotels,
         restaurants: restaurants,
         activities: activities
