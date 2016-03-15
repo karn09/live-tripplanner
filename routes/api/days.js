@@ -41,6 +41,28 @@ router.get('/restaurants', function(req, res) {
   })
 });
 
+router.get('/hotels', function(req, res) {
+  Hotel.find()
+  .then(function(hotels){
+    res.json(hotels)
+  })
+  .catch(function(err){
+    console.log(err);
+    res.send(err);
+  })
+});
+
+router.get('/activities', function(req, res) {
+  Activity.find()
+  .then(function(activities){
+    res.json(activities)
+  })
+  .catch(function(err){
+    console.log(err);
+    res.send(err);
+  })
+});
+
 router.get('/:day_id', function(req, res) {
   res.json(req.day);
 });
@@ -93,17 +115,87 @@ router.post('/add', function (req, res) {
   });
 });
 
-router.post('/:day_id/restaurant', function(req, res) {
-  // console.log(req.body.restaurant);
-  req.day.restaurants.push(req.body.restaurant);
-  console.log(req.day.restaurants);
-  res.sendStatus(200);
+router.post('/:day_id/restaurants', function(req, res) {
+  req.day.restaurants.push({_id:req.body.restaurant});
+  req.day.save()
+  .then(function(){
+    res.sendStatus(200);
+  })
+  .catch(function(err){
+    console.log(err);
+    res.sendStatus(404);
+  })
 });
 
 router.post('/:day_id/hotel', function(req, res) {
-
+  req.day.hotel = {_id:req.body.hotel};
+  req.day.save()
+  .then(function(){
+    res.sendStatus(200);
+  })
+  .catch(function(err){
+    console.log(err);
+    res.sendStatus(404);
+  })
 });
 
 router.post('/:day_id/activities', function(req, res) {
+  req.day.activities.push({_id:req.body.activity});
+  req.day.save()
+  .then(function(){
+    res.sendStatus(200);
+  })
+  .catch(function(err){
+    console.log(err);
+    res.sendStatus(404);
+  });
+});
 
+router.delete('/:day_id/restaurants', function(req, res) {
+  req.day.restaurants.pull({_id:req.body.restaurant});
+  req.day.save()
+  .then(function(){
+    res.sendStatus(200);
+  })
+  .catch(function(err){
+    console.log(err);
+    res.sendStatus(404);
+  })
+});
+
+router.delete('/:day_id/hotel', function(req, res) {
+  req.day.hotel = "";
+  req.day.save()
+  .then(function(){
+    res.sendStatus(200);
+  })
+  .catch(function(err){
+    console.log(err);
+    res.sendStatus(404);
+  })
+});
+
+router.delete('/:day_id/activities', function(req, res) {
+  req.day.activities.pull({_id:req.body.activity});
+  req.day.save()
+  .then(function(){
+    res.sendStatus(200);
+  })
+  .catch(function(err){
+    console.log(err);
+    res.sendStatus(404);
+  });
+});
+
+router.delete('/:day_id/remove', function (req, res) {
+  req.day.remove()
+  // data.save()
+  .then(function(day) {
+    console.log(day);
+    res.sendStatus(200);
+  })
+  .catch(function(err) {
+    console.log(err);
+    res.sendStatus(403);
+  });
 });
