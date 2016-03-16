@@ -2,11 +2,31 @@ var Promise = require('bluebird');
 var mongoose = require('mongoose');
 
 var daySchema = mongoose.Schema({
-  number: {type: Number, unique: true},
-  Hotel: {type: mongoose.Schema.Types.ObjectId, ref: 'Hotel'},
+  Hotels: [{type: mongoose.Schema.Types.ObjectId, ref: 'Hotel'}],
   Restaurants: [{type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant'}],
-  Activities: [{type: mongoose.Schema.Types.ObjectId, ref: 'Activity'}]
+  Activities: [{type: mongoose.Schema.Types.ObjectId, ref: 'Activity'}],
+  idx: { type: Number }
 });
+
+daySchema.statics.findFull = function() {
+  console.log(this.find()
+    .populate('Hotels Restaurants Activities'));
+  return this.find()
+    .populate('Hotels Restaurants Activities');
+}
+daySchema.statics.findByIdFull = function(id) {
+  return this.find(id)
+    .populate('Hotels Restaurants Activities');
+};
+daySchema.pre( 'save', function(next) {
+  var that = this;
+  Day.findOne()
+    .sort('-idx')
+    .then(function(day) {
+      that.idx = !day ? 0 : day.idx + 1;
+      next();
+    })
+})
 
 var Day = mongoose.model('day', daySchema);
 

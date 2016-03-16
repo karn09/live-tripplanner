@@ -55,18 +55,18 @@ Tripplanner.prototype.init = function(){
       var item = that.findItemByIdAndCategory(selector.val(), category);
       that.days[that.currentIdx][category].push(item._id);
 
-      $.ajax({
-        url: '/api/days/' + that.currentIdx + '/' + category.toLowerCase(),
-        method: 'POST',
-        data: { [category]: item._id},
-        dataType: 'json'
-      })
-      .done(function(data) {
-        console.log(data);
-      })
-      .fail(function(error) {
-        console.log(error)
-      });
+      // $.ajax({
+      //   url: '/api/days/' + that.currentIdx + '/' + category.toLowerCase(),
+      //   method: 'POST',
+      //   data: { [category]: item._id},
+      //   dataType: 'json'
+      // })
+      // .done(function(data) {
+      //   console.log(data);
+      // })
+      // .fail(function(error) {
+      //   console.log(error)
+      // });
 
       that.renderItem(item);
 
