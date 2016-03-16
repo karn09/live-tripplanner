@@ -1,35 +1,6 @@
 var Promise = require('bluebird');
 var mongoose = require('mongoose');
 
-var daySchema = mongoose.Schema({
-  Hotels: [{type: mongoose.Schema.Types.ObjectId, ref: 'Hotel'}],
-  Restaurants: [{type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant'}],
-  Activities: [{type: mongoose.Schema.Types.ObjectId, ref: 'Activity'}],
-  idx: { type: Number }
-});
-
-daySchema.statics.findFull = function() {
-  console.log(this.find()
-    .populate('Hotels Restaurants Activities'));
-  return this.find()
-    .populate('Hotels Restaurants Activities');
-}
-daySchema.statics.findByIdFull = function(id) {
-  return this.find(id)
-    .populate('Hotels Restaurants Activities');
-};
-daySchema.pre( 'save', function(next) {
-  var that = this;
-  Day.findOne()
-    .sort('-idx')
-    .then(function(day) {
-      that.idx = !day ? 0 : day.idx + 1;
-      next();
-    })
-})
-
-var Day = mongoose.model('day', daySchema);
-
 var placeSchema = mongoose.Schema({
   address: String,
   city: String,
@@ -69,6 +40,35 @@ var activitySchema = mongoose.Schema({
 });
 
 var Activity = mongoose.model('activity', activitySchema);
+
+
+var daySchema = mongoose.Schema({
+  Hotels: [{type: mongoose.Schema.Types.ObjectId, ref: 'hotel'}],
+  Restaurants: [{type: mongoose.Schema.Types.ObjectId, ref: 'restaurant'}],
+  Activities: [{type: mongoose.Schema.Types.ObjectId, ref: 'activity'}],
+  idx: { type: Number }
+});
+
+daySchema.statics.findFull = function() {
+  return this.find()
+    .populate('Hotels Restaurants Activities');
+}
+daySchema.statics.findByIdFull = function(id) {
+  return this.find(id)
+    .populate('Hotels Restaurants Activities');
+};
+daySchema.pre( 'save', function(next) {
+  var that = this;
+  Day.findOne()
+    .sort('-idx')
+    .then(function(day) {
+      that.idx = !day ? 0 : day.idx + 1;
+      next();
+    })
+})
+
+var Day = mongoose.model('day', daySchema);
+
 
 var models = {
   Hotel: Hotel,
