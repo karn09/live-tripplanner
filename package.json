@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "seed": "CONN=mongodb://localhost/tp-1601F node seed/tripplanner-seed.js",
-    "seed-win": "CONN=mongodb://localhost/tp-1601F node seed/tripplanner-seed.js",
+    "seed-win": "env CONN=mongodb://localhost/tp-1601F node seed/tripplanner-seed.js",
     "test": "CONN=mongodb://localhost/tp-1601F-test ./node_modules/mocha/bin/mocha",
     "start": "gulp sass:watch & CONN=mongodb://localhost/tp-1601F nodemon --ignore 'client/javascript/*.js' server",
     "start-gulp": "gulp sass:watch",

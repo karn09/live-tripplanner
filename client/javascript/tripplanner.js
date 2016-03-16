@@ -54,7 +54,23 @@ Tripplanner.prototype.init = function(){
         return;
       var item = that.findItemByIdAndCategory(selector.val(), category);
       that.days[that.currentIdx][category].push(item._id);
+
+      $.ajax({
+        url: '/api/days/' + that.currentIdx + '/' + category.toLowerCase(),
+        method: 'POST',
+        data: { [category]: item._id},
+        dataType: 'json'
+      })
+      .done(function(data) {
+        console.log(data);
+      })
+      .fail(function(error) {
+        console.log(error)
+      });
+
       that.renderItem(item);
+
+
     });
   });
 
@@ -167,15 +183,15 @@ Tripplanner.prototype.renderDay = function(){
     // var day;
     $.get('/api/days/' + this.currentIdx, function(data) {
       // console.log(data)
-      if (data.length === 0)
+      if (data == null || data.length === 0)
         return;
 
       var day = {
-        Hotels: [data[0]['Hotels']],
-        Restaurants: [data[0]['Restaurants']],
-        Activities: [data[0]['Activities']]
+        Hotels:  [] || [data['Hotels']],
+        Restaurants: data['Restaurants'],
+        Activities: data['Activities']
       };
-
+      console.log(day)
       that.categoryIterator(function(category){
         var ids = day[category];
         ids.forEach(function(id){
@@ -201,6 +217,7 @@ Tripplanner.prototype.renderDay = function(){
 };
 
 Tripplanner.prototype.renderItem = function(item){
+  console.log(item)
     var list = this.getDayList(item.category);
     var li = $('<li />').addClass('list-group-item');
     li.attr('data-id', item._id);

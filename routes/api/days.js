@@ -29,7 +29,7 @@ router.param('day_id', function(req, res, next, day_id) {
       console.log(err);
     });
   } else {
-    Day.find({
+    Day.findOne({
       number: Number(day_id)
     })
     .then(function(day) {
@@ -83,7 +83,7 @@ router.get('/:day_id', function(req, res) {
 });
 
 router.get('/:day_id/restaurants', function(req, res) {
-  Promise.map(req.day.restaurants, function(restaurant_id) {
+  Promise.map(req.day.Restaurants, function(restaurant_id) {
     return Restaurant.findById(restaurant_id);
   })
   .then(function(restaurants) {
@@ -95,14 +95,14 @@ router.get('/:day_id/restaurants', function(req, res) {
 });
 
 router.get('/:day_id/hotel', function(req, res) {
-  Hotel.findById(req.day.hotel)
+  Hotel.findById(req.day.Hotels)
     .then(function(hotel) {
       res.json(hotel);
     });
 });
 
 router.get('/:day_id/activities', function(req, res) {
-  Promise.map(req.day.activities, function(activity_id) {
+  Promise.map(req.day.Activities, function(activity_id) {
     return Activity.findById(activity_id);
   })
   .then(function(activities) {
@@ -118,6 +118,7 @@ router.get('/:day_id/activities', function(req, res) {
 
 
 router.post('/add', function (req, res) {
+  console.log('add day: ', req.body);
   var data = new Day(req.body);
   data.save()
   .then(function(day) {
@@ -131,7 +132,8 @@ router.post('/add', function (req, res) {
 });
 
 router.post('/:day_id/restaurants', function(req, res) {
-  req.day.Restaurants.push({_id:req.body.restaurant});
+  console.log('add rest: ', req.day)
+  req.day.Restaurants.push({_id:req.body.Restaurants});
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -141,9 +143,9 @@ router.post('/:day_id/restaurants', function(req, res) {
     res.sendStatus(404);
   })
 });
-
-router.post('/:day_id/hotel', function(req, res) {
-  req.day.Hotels = {_id:req.body.Hotel};
+// does not work from postman
+router.post('/:day_id/hotels', function(req, res) {
+  req.day.Hotels = {_id:req.body.Hotels};
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -155,7 +157,8 @@ router.post('/:day_id/hotel', function(req, res) {
 });
 
 router.post('/:day_id/activities', function(req, res) {
-  req.day.Activities.push({_id:req.body.Activity});
+  console.log(req.body)
+  req.day.Activities.push({_id:req.body.Activities});
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -167,7 +170,7 @@ router.post('/:day_id/activities', function(req, res) {
 });
 
 router.delete('/:day_id/restaurants', function(req, res) {
-  req.day.Restaurants.pull({_id:req.body.Restaurant});
+  req.day.Restaurants.pull({_id:req.body.Restaurants});
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -191,7 +194,7 @@ router.delete('/:day_id/hotel', function(req, res) {
 });
 
 router.delete('/:day_id/activities', function(req, res) {
-  req.day.Activities.pull({_id:req.body.activity});
+  req.day.Activities.pull({_id:req.body.Activities});
   req.day.save()
   .then(function(){
     res.sendStatus(200);
