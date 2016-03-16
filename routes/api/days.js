@@ -18,15 +18,30 @@ router.get('/', function(req, res) {
     });
 });
 router.param('day_id', function(req, res, next, day_id) {
-  Day.findById(day_id)
-  .then(function(day) {
-    req.day = day;
-    next();
-  })
-  .catch(function(err) {
-    console.log(err);
-  });
+
+  if (Number.isNaN(Number(day_id))) {
+    Day.findById(day_id)
+    .then(function(day) {
+      req.day = day;
+      next();
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+  } else {
+    Day.find({
+      number: Number(day_id)
+    })
+    .then(function(day) {
+      req.day = day;
+      next();
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+  }
 });
+
 
 
 
@@ -116,7 +131,7 @@ router.post('/add', function (req, res) {
 });
 
 router.post('/:day_id/restaurants', function(req, res) {
-  req.day.restaurants.push({_id:req.body.restaurant});
+  req.day.Restaurants.push({_id:req.body.restaurant});
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -128,7 +143,7 @@ router.post('/:day_id/restaurants', function(req, res) {
 });
 
 router.post('/:day_id/hotel', function(req, res) {
-  req.day.hotel = {_id:req.body.hotel};
+  req.day.Hotels = {_id:req.body.Hotel};
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -140,7 +155,7 @@ router.post('/:day_id/hotel', function(req, res) {
 });
 
 router.post('/:day_id/activities', function(req, res) {
-  req.day.activities.push({_id:req.body.activity});
+  req.day.Activities.push({_id:req.body.Activity});
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -152,7 +167,7 @@ router.post('/:day_id/activities', function(req, res) {
 });
 
 router.delete('/:day_id/restaurants', function(req, res) {
-  req.day.restaurants.pull({_id:req.body.restaurant});
+  req.day.Restaurants.pull({_id:req.body.Restaurant});
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -164,7 +179,7 @@ router.delete('/:day_id/restaurants', function(req, res) {
 });
 
 router.delete('/:day_id/hotel', function(req, res) {
-  req.day.hotel = "";
+  req.day.Hotels = "";
   req.day.save()
   .then(function(){
     res.sendStatus(200);
@@ -176,7 +191,7 @@ router.delete('/:day_id/hotel', function(req, res) {
 });
 
 router.delete('/:day_id/activities', function(req, res) {
-  req.day.activities.pull({_id:req.body.activity});
+  req.day.Activities.pull({_id:req.body.activity});
   req.day.save()
   .then(function(){
     res.sendStatus(200);

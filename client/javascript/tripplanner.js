@@ -1,4 +1,4 @@
-/* globals $,Mapper */ 
+/* globals $,Mapper */
 
 function Tripplanner(days, map, perm, attractions){
   this.currentIdx = 0;
@@ -19,6 +19,7 @@ Tripplanner.prototype.addDay = function(){
           Activities: []
         }
     );
+
     return this.days.length - 1;
 };
 
@@ -117,7 +118,7 @@ Tripplanner.prototype.hideItemInChooser = function(item){
     var sibs = option.siblings(':not(.hidden)');
     if(sibs.length)
       chooser.val(sibs[0].value);
-    else 
+    else
       chooser.val(null);
 };
 
@@ -127,9 +128,10 @@ Tripplanner.prototype.showItemInChooser = function(item){
     option.show().removeClass('hidden');
 };
 
+
 Tripplanner.prototype.removeItemFromDay = function(item){
     this.showItemInChooser(item);
-    var collection = this.days[this.currentIdx][item.category]; 
+    var collection = this.days[this.currentIdx][item.category];
     var idx = collection.indexOf(item._id);
     collection.splice(idx, 1);
     this.mapper.removeMarker(item);
@@ -150,22 +152,52 @@ Tripplanner.prototype.renderDayPicker = function(){
 
 Tripplanner.prototype.currentDay = function(){
   return this.days[this.currentIdx];
-}
+};
 
 Tripplanner.prototype.renderDay = function(){
     this.resetLists();
+    // on ajax req, check whether day exists in db or locally.
+    // if it exists in the db, request the id, and then render the obj by id.
 
+    // [0, 1, 2, ..n ]
+    // hit a route, that by day#, will return the day_id, which will return the information
+    var that = this;
     if(this.currentIdx === null)
       return;
+    // var day;
+    $.get('/api/days/' + this.currentIdx, function(data) {
+      // console.log(data)
+      if (data.length === 0)
+        return;
 
-    var day = this.days[this.currentIdx];
-    this.categoryIterator(function(category){
-      var ids = day[category];
-      ids.forEach(function(id){
-        var item = this.findItemByIdAndCategory(id, category);
-        this.renderItem(item);
-      }, this);
+      var day = {
+        Hotels: [data[0]['Hotels']],
+        Restaurants: [data[0]['Restaurants']],
+        Activities: [data[0]['Activities']]
+      };
+
+      that.categoryIterator(function(category){
+        var ids = day[category];
+        ids.forEach(function(id){
+          var item = this.findItemByIdAndCategory(id, category);
+          this.renderItem(item);
+        }, this);
+      });
+
+    })
+    .fail(function(err) {
+      console.log('err ', err);
     });
+    // console.log(day)
+    //var day = this.days[this.currentIdx];
+    // console.log(day)
+    // this.categoryIterator(function(category){
+    //   var ids = day[category];
+    //   ids.forEach(function(id){
+    //     var item = this.findItemByIdAndCategory(id, category);
+    //     this.renderItem(item);
+    //   }, this);
+    // });
 };
 
 Tripplanner.prototype.renderItem = function(item){
