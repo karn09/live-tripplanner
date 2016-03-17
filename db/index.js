@@ -9,17 +9,21 @@ var placeSchema = mongoose.Schema({
   location: [Number]
 });
 
-placeSchema.methods.sayHi = function(){
+placeSchema.methods.sayHi = function() {
   return this.address;
 };
 
 var Place = mongoose.model('place', placeSchema);
 
 var hotelSchema = mongoose.Schema({
-  name: { type: String, required: true },
+  name: {
+    type: String,
+    required: true
+  },
   num_stars: Number,
   amenities: String,
-  place: placeSchema
+  place: placeSchema,
+  category: { type: String, default: 'Hotels'}
 });
 
 var Hotel = mongoose.model('hotel', hotelSchema);
@@ -28,7 +32,8 @@ var restaurantSchema = mongoose.Schema({
   name: String,
   cuisine: String,
   price: Number,
-  place: placeSchema
+  place: placeSchema,
+  category: { type: String, default: 'Restaurants'}
 });
 
 var Restaurant = mongoose.model('restaurant', restaurantSchema);
@@ -36,36 +41,50 @@ var Restaurant = mongoose.model('restaurant', restaurantSchema);
 var activitySchema = mongoose.Schema({
   name: String,
   age_range: String,
-  place: placeSchema
+  place: placeSchema,
+  category: { type: String, default: 'Activities'}
+
 });
 
 var Activity = mongoose.model('activity', activitySchema);
 
 
 var daySchema = mongoose.Schema({
-  Hotels: [{type: mongoose.Schema.Types.ObjectId, ref: 'hotel'}],
-  Restaurants: [{type: mongoose.Schema.Types.ObjectId, ref: 'restaurant'}],
-  Activities: [{type: mongoose.Schema.Types.ObjectId, ref: 'activity'}],
-  idx: { type: Number }
+  Hotels: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'hotel'
+  }],
+  Restaurants: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'restaurant'
+  }],
+  Activities: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'activity'
+  }],
+  idx: {
+    type: Number
+  }
 });
 
 daySchema.statics.findFull = function() {
   return this.find()
     .populate('Hotels Restaurants Activities');
-}
+};
+
 daySchema.statics.findByIdFull = function(id) {
-  return this.find(id)
+  return this.findById(id)
     .populate('Hotels Restaurants Activities');
 };
-daySchema.pre( 'save', function(next) {
+daySchema.pre('save', function(next) {
   var that = this;
   Day.findOne()
     .sort('-idx')
     .then(function(day) {
-      that.idx = !day ? 0 : day.idx + 1;
+      that.idx = !day ? 1 : day.idx + 1;
       next();
-    })
-})
+    });
+});
 
 var Day = mongoose.model('day', daySchema);
 
@@ -80,12 +99,12 @@ var models = {
 
 var _conn;
 
-function connect(){
-  if(_conn)
+function connect() {
+  if (_conn)
     return _conn;
-  _conn = new Promise(function(resolve, reject){
-    mongoose.connect(process.env.CONN, function(err){
-      if(err)
+  _conn = new Promise(function(resolve, reject) {
+    mongoose.connect(process.env.CONN, function(err) {
+      if (err)
         return reject('make sure mongo is running and connection string is set');
       resolve(mongoose.connection);
     });
@@ -93,9 +112,9 @@ function connect(){
   return _conn;
 }
 
-function disconnect(){
-  return new Promise(function(resolve, reject){
-    mongoose.disconnect(function(){
+function disconnect() {
+  return new Promise(function(resolve, reject) {
+    mongoose.disconnect(function() {
       _conn = null;
       resolve();
     });

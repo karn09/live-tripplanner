@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
       if (days.length) {
         return days;
       } else {
-        return Day.create([{}]);
+        return Day.create({});
       }
     })
     .then(function(days) {
@@ -23,45 +23,48 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  return Day.create()
-    .then(function(days) {
-      res.send(days);
-  }, next)
+  return Day.create({})
+    .then(function(day) {
+      res.send(day);
+    }, next);
 });
 
 router.delete('/:id', function(req, res, next) {
-  return Day.remove({_id: req.params.id })
+  return Day.remove({
+      _id: req.params.id
+    })
     .then(function() {
       res.sendStatus(204);
-  }, next)
+    }, next);
 });
 
 router.delete('/:id/:category/:itemId', function(req, res, next) {
-    return Day.findByIdFull(req.params.id)
-      .then(function(day) {
-        day[req.params.category] = day[req.params.category].filter(function(item) {
-          return item.id !== req.params.itemId;
-        });
-        return day.save();
-      })
-      .then(function(day) {
-        res.send(day)
-      }, next)
-})
+  return Day.findByIdFull(req.params.id)
+    .then(function(day) {
+      day[req.params.category] = day[req.params.category].filter(function(item) {
+        return item.id !== req.params.itemId;
+      });
+      return day.save();
+    })
+    .then(function(day) {
+      res.send(day);
+    }, next);
+});
 
 router.post('/:id/:category/:itemId', function(req, res, next) {
-    return Day.findById(req.params.id)
-      .then(function(day) {
-        day[req.params.category].push(req.params.itemId)
-        return day.save();
-      })
-      .then(function(day) {
-        return Day.findByIdFull(req.params.id)
-      })
-      .then(function(day) {
-        res.send(day)
-      }, next)
-})
+  return Day.findById(req.params.id)
+    .then(function(day) {
+      day[req.params.category].push(req.params.itemId);
+      return day.save();
+    })
+    .then(function(day) {
+      return Day.findByIdFull(req.params.id);
+    })
+    .then(function(day) {
+      console.log(day);
+      res.send(day);
+    }, next);
+});
 
 
 // router.param('day_id', function(req, res, next, day_id) {

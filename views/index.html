@@ -12,7 +12,7 @@
   </div>
 </div>
 <div>
-  <script>
+  {# <script>
   {% autoescape false %}
   // note to instructors: next iteration, change `all_xyz` to `templateXyz`
   var Hotels = {{ hotels | json }};
@@ -33,7 +33,7 @@
     Activities: Activities
   }
   {% endautoescape %}
-  </script>
+  </script> #}
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAkarjA8hlysMC5aK7ywsrUwYY6UwpnXG0&sensor=true"></script>
   <script src='/client/javascript/tripplanner.js'></script>
   <script src='/client/javascript/mapper.js'></script>
